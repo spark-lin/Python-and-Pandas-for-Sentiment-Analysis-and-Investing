@@ -1,0 +1,48 @@
+import datetime
+import pandas as pd
+import pandas.io.data
+from pandas import DataFrame
+import matplotlib.pyplot as plt
+
+'''
+#WE RUN THIS ONLY ONCE
+sp500 = pd.io.data.get_data_yahoo('%5EGSPC',
+                                  start = datetime.datetime(2000,10,1),
+                                  end = datetime.datetime(2012,1,1))
+
+print sp500.head()
+
+
+sp500.to_csv('sp500_ohlc.csv')
+'''
+
+## Save all inside variable with DATE lika index.
+df = pd.read_csv('SP500_OHLC.CSV',index_col = 'Date', parse_dates = True)
+
+print df.head()
+
+# We get the close and high column and last 10 rows.
+ts = df[['Close','High']][-10:]
+print ts
+
+# We can also define new columns.
+
+df['H-L'] = df.High - df['Low']
+print df.head()
+
+close = df['Adj Close']
+##Moving average.
+ma = pd.rolling_mean(close,50)
+print ma[-10:]
+
+
+ax1 = plt.subplot(2,1,1)
+ax1.plot(close, label = 'sp500')
+ax1.plot(ma,label = '50MA')
+plt.legend()
+
+ax2 = plt.subplot(2,1,2, sharex = ax1)
+ax2.plot(df['H-L'],label = 'H-L')
+plt.legend()
+plt.show()
+
